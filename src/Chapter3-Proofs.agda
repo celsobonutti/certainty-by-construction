@@ -27,6 +27,8 @@ module Playground where
 
   open Chapter2-Numbers
 
+  open import Data.Sum using (_⊎_; inj₁; inj₂)
+
   0+x≡x : (x : ℕ) → zero + x ≡ x
   0+x≡x x = refl
 
@@ -115,6 +117,23 @@ module Playground where
 
   a^1≡a+b*0 : (a b : ℕ) → a ^ 1 ≡ a + (b * zero)
   a^1≡a+b*0 a b = trans (^-identityʳ a) (trans (sym (+-identityʳ a)) (cong (a +_) (sym (*-zeroʳ b))))
+
+  even+1-is-odd : ∀ (x : ℕ) → IsEven x → IsOdd (suc x)
+  even+1-is-odd zero z-even = IsOdd.one-odd
+  even+1-is-odd (suc (suc x)) (ss-even x₁) = IsOdd.succ-succ-odd (even+1-is-odd x x₁)
+
+  odd+1-is-even : ∀ (x : ℕ) → IsOdd x → IsEven (suc x)
+  odd+1-is-even zero ()
+  odd+1-is-even (suc 0) IsOdd.one-odd = ss-even z-even
+  odd+1-is-even (suc (suc x)) (IsOdd.succ-succ-odd x₁) = ss-even (odd+1-is-even x x₁)
+
+  even-or-odd : ∀ (x : ℕ) → IsEven x ⊎ IsOdd x
+  even-or-odd zero = inj₁ z-even
+  even-or-odd (suc x) with even-or-odd x
+  ... | inj₁ z-even = inj₂ IsOdd.one-odd
+  ... | inj₁ x₁ = inj₂ (even+1-is-odd x x₁)
+  ... | inj₂ IsOdd.one-odd = inj₁ (ss-even z-even)
+  ... | inj₂ y = inj₁ (odd+1-is-even x y)
 
   _! : ℕ → ℕ
   zero ! = 1
@@ -353,6 +372,7 @@ open import Relation.Binary.PropositionalEquality
 module PropEq where
   open Relation.Binary.PropositionalEquality
     using (refl; cong; sym; trans)
+    public
 
 open import Data.Bool
   using (if_then_else_)

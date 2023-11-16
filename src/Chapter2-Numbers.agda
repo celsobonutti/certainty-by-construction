@@ -250,7 +250,7 @@ open Sandbox-Naturals
   public
 
 open Sandbox-Naturals
-  using (IsEven)
+  using (IsEven; IsOdd)
   renaming ( zero-even to z-even
            ; suc-suc-even to ss-even
            )

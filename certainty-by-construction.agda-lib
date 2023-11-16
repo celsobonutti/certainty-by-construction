@@ -1,0 +1,4 @@
+name: certainty-by-construction
+include: src
+depend:
+  standard-library-2.0
